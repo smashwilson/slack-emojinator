@@ -19,6 +19,14 @@ mkvirtualenv slack-emojinator
 pip install -r requirements.txt
 ```
 
+You'll need to provide your team name (the bit before ".slack.com" in your admin URL) and your session cookie (grab it from your browser). Copy `.env.example`, fill them in, and source it.
+
+```bash
+cp .env.example .env
+${EDITOR} .env
+source .env
+```
+
 Now you're ready to go. Use a shell glob to invoke `upload.py` with the emoji files as ARGV:
 
 ```bash
