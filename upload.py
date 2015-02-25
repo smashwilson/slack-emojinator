@@ -13,7 +13,7 @@ url = "https://{}.slack.com/customize/emoji".format(team_name)
 for filename in sys.argv[1:]:
     print("Processing {}.".format(filename))
 
-    emoji_name = os.path.basename(filename)
+    emoji_name = os.path.splitext(os.path.basename(filename))[0]
 
     headers = {
         'Cookie': cookie,
