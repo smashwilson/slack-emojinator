@@ -21,6 +21,8 @@ pip install -r requirements.txt
 
 You'll need to provide your team name (the bit before ".slack.com" in your admin URL) and your session cookie (grab it from your browser). Copy `.env.example`, fill them in, and source it.
 
+To grab your Slack session cookie, [open your browser's javascript console](http://webmasters.stackexchange.com/a/77337) and copy the value of `document.cookie`
+
 ```bash
 cp .env.example .env
 ${EDITOR} .env
