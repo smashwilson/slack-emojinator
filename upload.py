@@ -10,12 +10,17 @@ import requests
 
 from bs4 import BeautifulSoup
 
+try:
+    raw_input
+except NameError:
+    raw_input = input
+
 team_name = os.getenv('SLACK_TEAM')
 if not team_name:
-    team_name = input("Please enter the team name: ")
+    team_name = raw_input("Please enter the team name: ")
 cookie = os.getenv('SLACK_COOKIE')
 if not cookie:
-    cookie = input("Please enter the \"emoji\" cookie: ")
+    cookie = raw_input("Please enter the \"emoji\" cookie: ")
 
 url = "https://{}.slack.com/customize/emoji".format(team_name)
 headers = {
