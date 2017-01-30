@@ -18,6 +18,9 @@ lib64/
 parts/
 sdist/
 var/
+bin/
+include/
+pip-selfcheck.json
 *.egg-info/
 .installed.cfg
 *.egg
@@ -53,4 +56,5 @@ docs/_build/
 # PyBuilder
 target/
 
+# Ignore environment variable file
 .env

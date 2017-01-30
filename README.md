@@ -41,3 +41,12 @@ python upload.py ${EMOJI_DIR}/*.png
 ```
 
 :sparkles:
+
+## Exporting Emoji
+
+A Slack API token and an export director are needed for the export. They can be added to the `.env` file and sourced.
+
+```bash
+source .env
+python export.py ${EMOJI_DIR}/
+```
