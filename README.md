@@ -44,9 +44,9 @@ python upload.py ${EMOJI_DIR}/*.png
 
 ## Exporting Emoji
 
-A Slack API token and an export director are needed for the export. They can be added to the `.env` file and sourced.
+To export emoji, simply use `export.py` and specify an emoji directory:
 
 ```bash
 source .env
-python export.py ${EMOJI_DIR}/
+python export.py path-to-destination/
 ```
