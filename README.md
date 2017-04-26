@@ -12,6 +12,8 @@ Prepare a directory that contains an image for each emoji you want to create. Re
 
 Clone the project, create a new virtualenv, and install the prereqs:
 
+`libxml` is required on your system, if you'd like to use the bulk export script.
+
 ```bash
 git clone https://github.com/smashwilson/slack-emojinator.git
 cd slack-emojinator
