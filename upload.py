@@ -80,7 +80,7 @@ def main():
 def get_current_emoji_list(session):
     r = session.get(session.url)
     r.raise_for_status()
-    x = re.findall("data-emoji-name=\"(.*)\"", r.text)
+    x = re.findall("data-emoji-name=\"(.*?)\"", r.text)
     return x
 
 
