@@ -44,6 +44,18 @@ def _argparse():
         help='Defaults to the $SLACK_COOKIE environment variable.'
     )
     parser.add_argument(
+        '--prefix', '-p',
+        default=os.getenv('EMOJI_NAME_PREFIX', ''),
+        help='Prefix to add to genereted emoji name. '
+        'Defaults to the $EMOJI_NAME_PREFIX environment variable.'
+    )
+    parser.add_argument(
+        '--suffix', '-s',
+        default=os.getenv('EMOJI_NAME_SUFFIX', ''),
+        help='Suffix to add to generated emoji name. '
+        'Defaults to the $EMOJI_NAME_SUFFIX environment variable.'
+    )
+    parser.add_argument(
         'slackmoji_files',
         nargs='+',
         help=('Paths to slackmoji, e.g. if you '
@@ -66,7 +78,11 @@ def main():
     skipped = 0
     for filename in args.slackmoji_files:
         print("Processing {}.".format(filename))
-        emoji_name = os.path.splitext(os.path.basename(filename))[0]
+        emoji_name = '{}{}{}'.format(
+            args.prefix.strip(),
+            os.path.splitext(os.path.basename(filename))[0],
+            args.suffix.strip()
+        )
         if emoji_name in existing_emojis:
             print("Skipping {}. Emoji already exists".format(emoji_name))
             skipped += 1
@@ -105,6 +121,7 @@ def upload_emoji(session, emoji_name, filename):
         soup = BeautifulSoup(r.text, "html.parser")
         crumb = soup.find("p", attrs={"class": "alert_error"})
         print("Error with uploading %s: %s" % (emoji_name, crumb.text))
+
 
 if __name__ == '__main__':
     main()
