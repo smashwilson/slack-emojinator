@@ -39,7 +39,7 @@ source .env
 Now you're ready to go. Use a shell glob to invoke `upload.py` with the emoji files as ARGV:
 
 ```bash
-pipenv run upload.py ${EMOJI_DIR}/*.png
+pipenv run python upload.py ${EMOJI_DIR}/*.png
 ```
 
 :sparkles:
@@ -50,5 +50,5 @@ To export emoji, use `export.py` and specify an emoji directory:
 
 ```bash
 source .env
-pipenv run export.py path-to-destination/
+pipenv run python export.py path-to-destination/
 ```
