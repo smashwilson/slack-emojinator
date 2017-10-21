@@ -14,7 +14,7 @@ import shutil
 
 def _argparse():
     parser = argparse.ArgumentParser(
-        description='Bulk import of emoji froma slack team'
+        description='Bulk import of emoji from a slack team'
     )
     parser.add_argument(
         '--directory', '-d',
