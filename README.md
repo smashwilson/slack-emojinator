@@ -44,7 +44,7 @@ pipenv run upload.py ${EMOJI_DIR}/*.png
 
 ## Exporting Emoji
 
-A Slack API token and an export director are needed for the export. They can be added to the `.env` file and sourced.
+A Slack API token and an export directory are needed for the export. They can be added to the `.env` file and sourced.
 
 ```bash
 source .env
