@@ -13,4 +13,4 @@ name = "pypi"
 
 "beautifulsoup4" = "<5.0,>=4.4"
 requests = "<3.0,>=2.5.3"
-slacker = "==0.9.30"
+slacker = "*"
