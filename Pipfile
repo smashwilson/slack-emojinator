@@ -1,0 +1,16 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[dev-packages]
+
+
+
+[packages]
+
+"beautifulsoup4" = "<5.0,>=4.4"
+requests = "<3.0,>=2.5.3"
+slacker = "==0.9.30"
