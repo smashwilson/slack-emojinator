@@ -31,7 +31,7 @@ def _argparse():
     parser.add_argument(
         '--cookie', '-c',
         default=os.getenv('SLACK_COOKIE'),
-        help='Default sto the $SLACK_COOKIE environment variable.'
+        help='Defaults to the $SLACK_COOKIE environment variable.'
     )
     args = parser.parse_args()
     return args
