@@ -12,6 +12,8 @@ Prepare a directory that contains an image for each emoji you want to create. Re
 
 Clone the project, create a new virtualenv, and install the prereqs:
 
+`libxml` is required on your system, if you'd like to use the bulk export script.
+
 ```bash
 git clone https://github.com/smashwilson/slack-emojinator.git
 cd slack-emojinator
@@ -44,9 +46,9 @@ python upload.py ${EMOJI_DIR}/*.png
 
 ## Exporting Emoji
 
-A Slack API token and an export director are needed for the export. They can be added to the `.env` file and sourced.
+To export emoji, simply use `export.py` and specify an emoji directory:
 
 ```bash
 source .env
-python export.py ${EMOJI_DIR}/
+python export.py path-to-destination/
 ```
