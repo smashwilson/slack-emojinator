@@ -39,6 +39,7 @@ def _argparse():
     parser.add_argument(
         '--concurrent-requests', '-r',
         default=os.getenv('CONCURRENT_REQUESTS', 200),
+        type=int,
         help='Maximum concurrent requests. Defaults to the $CONCURRENT_REQUESTS environment variable or 200.'
     )
     args = parser.parse_args()
