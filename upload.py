@@ -17,7 +17,12 @@ try:
 except NameError:
     raw_input = input
 
-URL = "https://{team_name}.slack.com/customize/emoji"
+URL_CUSTOMIZE = "https://{team_name}.slack.com/customize/emoji"
+URL_ADD = "https://{team_name}.slack.com/api/emoji.add"
+URL_LIST = "https://{team_name}.slack.com/api/emoji.adminList"
+
+API_TOKEN_REGEX = r"api_token: \"(.*)\","
+API_TOKEN_PATTERN = re.compile(API_TOKEN_REGEX)
 
 
 def _session(args):
@@ -25,7 +30,10 @@ def _session(args):
     assert args.team_name, "Team name required"
     session = requests.session()
     session.headers = {'Cookie': args.cookie}
-    session.url = URL.format(team_name=args.team_name)
+    session.url_customize = URL_CUSTOMIZE.format(team_name=args.team_name)
+    session.url_add = URL_ADD.format(team_name=args.team_name)
+    session.url_list = URL_LIST.format(team_name=args.team_name)
+    session.api_token = _fetch_api_token(session)
     return session
 
 
@@ -70,6 +78,22 @@ def _argparse():
     return args
 
 
+def _fetch_api_token(session):
+    # Fetch the form first, to get an api_token.
+    r = session.get(session.url_customize)
+    r.raise_for_status()
+    soup = BeautifulSoup(r.text, "html.parser")
+
+    all_script = soup.findAll("script")
+    for script in all_script:
+        for line in script.text.splitlines():
+            if 'api_token' in line:
+                # api_token: "xoxs-12345-abcdefg....",
+                return API_TOKEN_PATTERN.match(line.strip()).group(1)
+
+    raise Exception('api_token not found. response status={}'.format(r.status_code))
+
+
 def main():
     args = _argparse()
     session = _session(args)
@@ -94,33 +118,41 @@ def main():
 
 
 def get_current_emoji_list(session):
-    r = session.get(session.url)
-    r.raise_for_status()
-    x = re.findall("data-emoji-name=\"(.*?)\"", r.text)
-    return x
+    page = 1
+    result = []
+    while True:
+        data = {
+            'query': '',
+            'page': page,
+            'count': 1000,
+            'token': session.api_token
+        }
+        r = session.post(session.url_list, data=data)
+        r.raise_for_status()
+        response_json = r.json()
+
+        result.extend(map(lambda e: e["name"], response_json["emoji"]))
+        if page >= response_json["paging"]["pages"]:
+            break
+
+        page = page + 1
+    return result
 
 
 def upload_emoji(session, emoji_name, filename):
-    # Fetch the form first, to generate a crumb.
-    r = session.get(session.url)
-    r.raise_for_status()
-    soup = BeautifulSoup(r.text, "html.parser")
-    crumb = soup.find("input", attrs={"name": "crumb"})["value"]
-
     data = {
-        'add': 1,
-        'crumb': crumb,
-        'name': emoji_name,
         'mode': 'data',
+        'name': emoji_name,
+        'token': session.api_token
     }
-    files = {'img': open(filename, 'rb')}
-    r = session.post(session.url, data=data, files=files, allow_redirects=False)
+    files = {'image': open(filename, 'rb')}
+    r = session.post(session.url_add, data=data, files=files, allow_redirects=False)
     r.raise_for_status()
-    # Slack returns 200 OK even if upload fails, so check for status of 'alert_error' info box
-    if b'alert_error' in r.content:
-        soup = BeautifulSoup(r.text, "html.parser")
-        crumb = soup.find("p", attrs={"class": "alert_error"})
-        print("Error with uploading %s: %s" % (emoji_name, crumb.text))
+
+    # Slack returns 200 OK even if upload fails, so check for status.
+    response_json = r.json()
+    if not response_json['ok']:
+        print("Error with uploading %s: %s" % (emoji_name, response_json))
 
 
 if __name__ == '__main__':
