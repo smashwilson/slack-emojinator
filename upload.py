@@ -121,7 +121,6 @@ def get_current_emoji_list(session):
     page = 1
     result = []
     while True:
-        print("get current emoji_list page={}.".format(page))
         data = {
             'query': '',
             'page': page,
@@ -137,7 +136,6 @@ def get_current_emoji_list(session):
             break
 
         page = page + 1
-    print("{} emoji found".format(len(result)))
     return result
 
 
