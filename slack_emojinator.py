@@ -21,6 +21,7 @@ def _session(args):
 	session.headers = {'Cookie': args.cookie}
 	session.url = URL.format(team_name=args.team_name)
 	session.url_delete = URL_DELETE.format(team_name=args.team_name)
+	session.token = args.token
 	return session
 
 
@@ -37,6 +38,11 @@ def _argparse():
 		'--cookie', '-c',
 		default=os.getenv('SLACK_COOKIE'),
 		help='Defaults to the $SLACK_COOKIE environment variable.'
+	)
+	parser.add_argument(
+		'--token', '-k',
+		default=os.getenv('SLACK_TOKEN'),
+		help='Defaults to the $SLACK_TOKEN environment variable.'
 	)
 	parser.add_argument(
 		'--prefix', '-p',
@@ -214,7 +220,7 @@ def upload_emoji(session, emoji_name, filename):
 def delete_emoji(session, emoji_name):
 	data = {
 		'name': emoji_name,
-		'token': "xoxs-195008312805-195741066343-195722307958-36ca7f8642",
+		'token': session.token,
 		'set_active': "true",
 	}
 	r = session.post(session.url_delete, data=data, allow_redirects=False)
