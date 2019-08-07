@@ -21,7 +21,7 @@ URL_CUSTOMIZE = "https://{team_name}.slack.com/customize/emoji"
 URL_ADD = "https://{team_name}.slack.com/api/emoji.add"
 URL_LIST = "https://{team_name}.slack.com/api/emoji.adminList"
 
-API_TOKEN_REGEX = r"api_token: \"(.*)\","
+API_TOKEN_REGEX = r"\"?api_token\"?: ?\"(.*)\","
 API_TOKEN_PATTERN = re.compile(API_TOKEN_REGEX)
 
 
