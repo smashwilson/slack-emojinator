@@ -21,7 +21,7 @@ URL_CUSTOMIZE = "https://{team_name}.slack.com/customize/emoji"
 URL_ADD = "https://{team_name}.slack.com/api/emoji.add"
 URL_LIST = "https://{team_name}.slack.com/api/emoji.adminList"
 
-API_TOKEN_REGEX = r"\"?api_token\"?: ?\"(.*)\","
+API_TOKEN_REGEX = r"\"?api_token\"?: ?\"(.*?)\","
 API_TOKEN_PATTERN = re.compile(API_TOKEN_REGEX)
 
 
@@ -89,7 +89,7 @@ def _fetch_api_token(session):
         for line in script.text.splitlines():
             if 'api_token' in line:
                 # api_token: "xoxs-12345-abcdefg....",
-                return API_TOKEN_PATTERN.match(line.strip()).group(1)
+                return API_TOKEN_PATTERN.search(line.strip()).group(1)
 
     raise Exception('api_token not found. response status={}'.format(r.status_code))
 
