@@ -8,9 +8,11 @@ from __future__ import print_function
 import argparse
 import os
 import re
-import requests
+from time import sleep
 
 from bs4 import BeautifulSoup
+
+import requests
 
 try:
     raw_input
@@ -101,6 +103,7 @@ def _fetch_api_token(session):
 
                 return match_group.group(1)
 
+    raise ParseError("No api_token found in page")
 
 
 def main():
@@ -136,9 +139,9 @@ def get_current_emoji_list(session):
             'count': 1000,
             'token': session.api_token
         }
-        r = session.post(session.url_list, data=data)
-        r.raise_for_status()
-        response_json = r.json()
+        resp = session.post(session.url_list, data=data)
+        resp.raise_for_status()
+        response_json = resp.json()
 
         result.extend(map(lambda e: e["name"], response_json["emoji"]))
         if page >= response_json["paging"]["pages"]:
@@ -154,14 +157,28 @@ def upload_emoji(session, emoji_name, filename):
         'name': emoji_name,
         'token': session.api_token
     }
-    files = {'image': open(filename, 'rb')}
-    r = session.post(session.url_add, data=data, files=files, allow_redirects=False)
-    r.raise_for_status()
 
-    # Slack returns 200 OK even if upload fails, so check for status.
-    response_json = r.json()
-    if not response_json['ok']:
-        print("Error with uploading %s: %s" % (emoji_name, response_json))
+    i = 0
+    while True:
+        i += 1
+        with open(filename, 'rb') as f:
+            files = {'image': f}
+            resp = session.post(session.url_add, data=data, files=files, allow_redirects=False)
+
+            if resp.status_code == 429:
+                wait = 2**i
+                print("429 Too Many Requests!, sleeping for %d seconds" % wait)
+                sleep(wait)
+                continue
+
+        resp.raise_for_status()
+
+        # Slack returns 200 OK even if upload fails, so check for status.
+        response_json = resp.json()
+        if not response_json['ok']:
+            print("Error with uploading %s: %s" % (emoji_name, response_json))
+
+        break
 
 
 if __name__ == '__main__':
