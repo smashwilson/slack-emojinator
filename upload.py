@@ -21,9 +21,11 @@ URL_CUSTOMIZE = "https://{team_name}.slack.com/customize/emoji"
 URL_ADD = "https://{team_name}.slack.com/api/emoji.add"
 URL_LIST = "https://{team_name}.slack.com/api/emoji.adminList"
 
-API_TOKEN_REGEX = r"api_token: \"(.*)\","
+API_TOKEN_REGEX = r'.*(?:\"?api_token\"?):\s*\"([^"]+)\".*'
 API_TOKEN_PATTERN = re.compile(API_TOKEN_REGEX)
 
+class ParseError(Exception):
+    pass
 
 def _session(args):
     assert args.cookie, "Cookie required"
@@ -89,9 +91,16 @@ def _fetch_api_token(session):
         for line in script.text.splitlines():
             if 'api_token' in line:
                 # api_token: "xoxs-12345-abcdefg....",
-                return API_TOKEN_PATTERN.match(line.strip()).group(1)
+                # "api_token":"xoxs-12345-abcdefg....",
+                match_group = API_TOKEN_PATTERN.match(line.strip())
+                if not match_group:
+                    raise ParseError(
+                        "Could not parse API token from remote data! "
+                        "Regex requires updating."
+                    )
 
-    raise Exception('api_token not found. response status={}'.format(r.status_code))
+                return match_group.group(1)
+
 
 
 def main():
