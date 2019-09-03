@@ -8,9 +8,11 @@ from __future__ import print_function
 import argparse
 import os
 import re
-import requests
+from time import sleep
 
 from bs4 import BeautifulSoup
+
+import requests
 
 try:
     raw_input
@@ -21,9 +23,11 @@ URL_CUSTOMIZE = "https://{team_name}.slack.com/customize/emoji"
 URL_ADD = "https://{team_name}.slack.com/api/emoji.add"
 URL_LIST = "https://{team_name}.slack.com/api/emoji.adminList"
 
-API_TOKEN_REGEX = r"api_token: \"(.*)\","
+API_TOKEN_REGEX = r'.*(?:\"?api_token\"?):\s*\"([^"]+)\".*'
 API_TOKEN_PATTERN = re.compile(API_TOKEN_REGEX)
 
+class ParseError(Exception):
+    pass
 
 def _session(args):
     assert args.cookie, "Cookie required"
@@ -89,9 +93,17 @@ def _fetch_api_token(session):
         for line in script.text.splitlines():
             if 'api_token' in line:
                 # api_token: "xoxs-12345-abcdefg....",
-                return API_TOKEN_PATTERN.match(line.strip()).group(1)
+                # "api_token":"xoxs-12345-abcdefg....",
+                match_group = API_TOKEN_PATTERN.match(line.strip())
+                if not match_group:
+                    raise ParseError(
+                        "Could not parse API token from remote data! "
+                        "Regex requires updating."
+                    )
 
-    raise Exception('api_token not found. response status={}'.format(r.status_code))
+                return match_group.group(1)
+
+    raise ParseError("No api_token found in page")
 
 
 def main():
@@ -127,9 +139,9 @@ def get_current_emoji_list(session):
             'count': 1000,
             'token': session.api_token
         }
-        r = session.post(session.url_list, data=data)
-        r.raise_for_status()
-        response_json = r.json()
+        resp = session.post(session.url_list, data=data)
+        resp.raise_for_status()
+        response_json = resp.json()
 
         result.extend(map(lambda e: e["name"], response_json["emoji"]))
         if page >= response_json["paging"]["pages"]:
@@ -145,14 +157,28 @@ def upload_emoji(session, emoji_name, filename):
         'name': emoji_name,
         'token': session.api_token
     }
-    files = {'image': open(filename, 'rb')}
-    r = session.post(session.url_add, data=data, files=files, allow_redirects=False)
-    r.raise_for_status()
 
-    # Slack returns 200 OK even if upload fails, so check for status.
-    response_json = r.json()
-    if not response_json['ok']:
-        print("Error with uploading %s: %s" % (emoji_name, response_json))
+    i = 0
+    while True:
+        i += 1
+        with open(filename, 'rb') as f:
+            files = {'image': f}
+            resp = session.post(session.url_add, data=data, files=files, allow_redirects=False)
+
+            if resp.status_code == 429:
+                wait = 2**i
+                print("429 Too Many Requests!, sleeping for %d seconds" % wait)
+                sleep(wait)
+                continue
+
+        resp.raise_for_status()
+
+        # Slack returns 200 OK even if upload fails, so check for status.
+        response_json = resp.json()
+        if not response_json['ok']:
+            print("Error with uploading %s: %s" % (emoji_name, response_json))
+
+        break
 
 
 if __name__ == '__main__':
