@@ -158,15 +158,13 @@ def upload_emoji(session, emoji_name, filename):
         'token': session.api_token
     }
 
-    i = 0
     while True:
-        i += 1
         with open(filename, 'rb') as f:
             files = {'image': f}
             resp = session.post(session.url_add, data=data, files=files, allow_redirects=False)
 
             if resp.status_code == 429:
-                wait = 2**i
+                wait = int(resp.headers.get('retry-after', 1))
                 print("429 Too Many Requests!, sleeping for %d seconds" % wait)
                 sleep(wait)
                 continue
