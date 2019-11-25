@@ -1,17 +1,13 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [dev-packages]
 
-
-
 [packages]
-
 "beautifulsoup4" = "<5.0,>=4.4"
 requests = "<3.0,>=2.5.3"
 lxml = "*"
 aiohttp = ">2.3.0"
+idna-ssl = "==1.1.0"
