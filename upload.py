@@ -68,11 +68,8 @@ def _argparse():
         'Defaults to the $EMOJI_NAME_SUFFIX environment variable.'
     )
     parser.add_argument(
-        'slackmoji_files',
-        nargs='+',
-        help=('Paths to slackmoji, e.g. if you '
-              'unzipped http://cultofthepartyparrot.com/parrots.zip '
-              'in your home dir, then use ~/parrots/*'),
+        '--slackmoji-dir',
+       help='Directory containing Slackmojis to open and bulk upload from'
     )
     args = parser.parse_args()
     if not args.team_name:
@@ -112,7 +109,11 @@ def main():
     existing_emojis = get_current_emoji_list(session)
     uploaded = 0
     skipped = 0
-    for filename in args.slackmoji_files:
+    emoji_files = [
+        os.path.join(args.slackmoji_dir, filename)
+        for filename in os.listdir(args.slackmoji_dir)
+    ]
+    for filename in emoji_files:
         print("Processing {}.".format(filename))
         emoji_name = '{}{}{}'.format(
             args.prefix.strip(),

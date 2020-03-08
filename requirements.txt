@@ -1,5 +1,5 @@
 beautifulsoup4>=4.4, <5.0
 requests>=2.5.3, <3.0
-lxml==3.7.3
+#lxml==3.7.3
 aiohttp==2.3.1
 idna-ssl==1.1.0
