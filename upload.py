@@ -22,6 +22,7 @@ except NameError:
 URL_CUSTOMIZE = "https://{team_name}.slack.com/customize/emoji"
 URL_ADD = "https://{team_name}.slack.com/api/emoji.add"
 URL_LIST = "https://{team_name}.slack.com/api/emoji.adminList"
+FORCED_SLEEP_TIME = 2
 
 API_TOKEN_REGEX = r'.*(?:\"?api_token\"?):\s*\"([^"]+)\".*'
 API_TOKEN_PATTERN = re.compile(API_TOKEN_REGEX)
@@ -68,11 +69,8 @@ def _argparse():
         'Defaults to the $EMOJI_NAME_SUFFIX environment variable.'
     )
     parser.add_argument(
-        'slackmoji_files',
-        nargs='+',
-        help=('Paths to slackmoji, e.g. if you '
-              'unzipped http://cultofthepartyparrot.com/parrots.zip '
-              'in your home dir, then use ~/parrots/*'),
+        '--slackmoji-dir',
+       help='Directory containing Slackmojis to open and bulk upload from'
     )
     args = parser.parse_args()
     if not args.team_name:
@@ -112,7 +110,11 @@ def main():
     existing_emojis = get_current_emoji_list(session)
     uploaded = 0
     skipped = 0
-    for filename in args.slackmoji_files:
+    emoji_files = [
+        os.path.join(args.slackmoji_dir, filename)
+        for filename in os.listdir(args.slackmoji_dir)
+    ]
+    for filename in emoji_files:
         print("Processing {}.".format(filename))
         emoji_name = '{}{}{}'.format(
             args.prefix.strip(),
@@ -123,6 +125,8 @@ def main():
             print("Skipping {}. Emoji already exists".format(emoji_name))
             skipped += 1
         else:
+            print("We sleep for {}".format(FORCED_SLEEP_TIME))
+            sleep(FORCED_SLEEP_TIME)
             upload_emoji(session, emoji_name, filename)
             print("{} upload complete.".format(filename))
             uploaded += 1
