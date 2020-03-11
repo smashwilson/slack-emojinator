@@ -22,6 +22,7 @@ except NameError:
 URL_CUSTOMIZE = "https://{team_name}.slack.com/customize/emoji"
 URL_ADD = "https://{team_name}.slack.com/api/emoji.add"
 URL_LIST = "https://{team_name}.slack.com/api/emoji.adminList"
+FORCED_SLEEP_TIME = 2
 
 API_TOKEN_REGEX = r'.*(?:\"?api_token\"?):\s*\"([^"]+)\".*'
 API_TOKEN_PATTERN = re.compile(API_TOKEN_REGEX)
@@ -124,6 +125,8 @@ def main():
             print("Skipping {}. Emoji already exists".format(emoji_name))
             skipped += 1
         else:
+            print("We sleep for {}".format(FORCED_SLEEP_TIME))
+            sleep(FORCED_SLEEP_TIME)
             upload_emoji(session, emoji_name, filename)
             print("{} upload complete.".format(filename))
             uploaded += 1
