@@ -85,6 +85,7 @@
         },
         "lxml": {
             "hashes": [
+                "sha256:fa071559f14bd1e92077b1b5f6c22cf09756c6de7139370249eb372854ce51e6",
                 "sha256:0a103253a94cdad86028d273aaebb8b30c75fdf009c23e52cdc8ce88429fd326",
                 "sha256:10399bececdb67f0d9251ecf2dda2abf6ddeee6096741754356f1a3715c8c830",
                 "sha256:12e348eb57fb79ccf91a49b7b937c49a5bbe1d73ba75589674b76a56d064bda0",
@@ -115,7 +116,7 @@
                 "sha256:feb2144c2ae4035ad57165dd22bdc93b1389158a985c0497a096d39e2b2cd67b"
             ],
             "index": "pypi",
-            "version": "==4.1.0"
+            "version": "==4.5.0"
         },
         "multidict": {
             "hashes": [
