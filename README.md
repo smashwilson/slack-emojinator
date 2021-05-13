@@ -4,6 +4,8 @@
 
 Want to create a custom Slack emoji for every pokemon? Slack doesn't currently expose an API endpoint for creating emoji, probably to prevent users from doing exactly what I'm doing, but here's a way to do it anyway.
 
+Want to *download* emoji instead?  Try [`save-slack-emoji`](https://github.com/nylen/save-slack-emoji).
+
 ## Creating Emoji
 
 You'll need Python and `pip` to get started. I recommend using [pipenv](https://docs.pipenv.org/).
