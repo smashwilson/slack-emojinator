@@ -73,8 +73,20 @@ docker build . -t slack-emojinator
 
 ### Run
 
-To run your local image:
+#### Upload Emoji
 
 ```sh
-docker run -v <Emoji directory>:/emoji -e SLACK_TEAM=<SLACK TEAM NAME> -e API_TOKEN="<SLACK API TOKEN>" -e SLACK_COOKIE="<SLACK COOKIE>" slack-emojinator
+docker run -v <Emoji directory>:/emoji -e SLACK_TEAM=<SLACK TEAM NAME> -e SLACK_API_TOKEN="<SLACK API TOKEN>" -e SLACK_COOKIE="<SLACK COOKIE>" slack-emojinator
+```
+
+or
+
+```sh
+docker run -v <Emoji directory>:/emoji slack-emojinator upload.py /emoji --team-name="<SLACK TEAM NAME>" --api-token="<SLACK API TOKEN>" --cookie="<SLACK COOKIE>"
+```
+
+#### Export Emoji
+
+```sh
+docker run -v <Emoji directory>:/emoji -e SLACK_TEAM=<SLACK TEAM NAME> -e SLACK_API_TOKEN="<SLACK API TOKEN>" -e SLACK_COOKIE="<SLACK COOKIE>" slack-emojinator export.py /emoji/
 ```

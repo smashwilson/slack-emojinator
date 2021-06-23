@@ -58,7 +58,7 @@ def _argparse():
         help='Defaults to the $SLACK_COOKIE environment variable.'
     )
     parser.add_argument(
-        '--api_token', '-a',
+        '--api-token', '-a',
         default=os.getenv('SLACK_API_TOKEN', ""),
         help='Set the API token from input'
              'Defaults to the value pulled from the cookie'
