@@ -39,7 +39,7 @@ def _session(args):
     session.url_customize = URL_CUSTOMIZE.format(team_name=args.team_name)
     session.url_add = URL_ADD.format(team_name=args.team_name)
     session.url_list = URL_LIST.format(team_name=args.team_name)
-    session.api_token = _fetch_api_token(session)
+    session.api_token = args.api_token or _fetch_api_token(session)
     return session
 
 
@@ -56,6 +56,12 @@ def _argparse():
         '--cookie', '-c',
         default=os.getenv('SLACK_COOKIE'),
         help='Defaults to the $SLACK_COOKIE environment variable.'
+    )
+    parser.add_argument(
+        '--api-token', '-a',
+        default=os.getenv('SLACK_API_TOKEN', ""),
+        help='Set the API token from input'
+             'Defaults to the value pulled from the cookie'
     )
     parser.add_argument(
         '--prefix', '-p',

@@ -26,9 +26,15 @@ To grab your Slack session cookie:
 
 * [Open your browser's dev tools](http://webmasters.stackexchange.com/a/77337) and copy the value of `document.cookie`.
 * Go to the Network tab.
-* Re-load your workspace's `https://{teamname}.slack.com/customize/emoji` page.
+* Re-load your workspace's [Slack emoji customization](https://my.slack.com/customize/emoji) page.
 * Find the call to `emoji` (it is most likely the very top request).
 * Scroll to `Request-Headers`, copy the value of "Cookie," and add to your `.env` file.
+
+To grab your Slack API TOKEN:
+
+* Open your workspace's [Slack emoji customization](https://my.slack.com/customize/emoji) page.
+* Upload a single emoji with dev tools open
+* Look for a request header `api_token`
 
 ```bash
 cp .env.example .env
@@ -51,4 +57,36 @@ To export emoji, use `export.py` and specify an emoji directory:
 ```bash
 source .env
 pipenv run python export.py path-to-destination/
+```
+
+## Using Docker
+
+This project now includes a dockerfile, for anyone keen to run without installing python locally.
+
+### Build
+
+To build the docker image locally:
+
+```sh
+docker build . -t slack-emojinator
+```
+
+### Run
+
+#### Upload Emoji
+
+```sh
+docker run -v <Emoji directory>:/emoji -e SLACK_TEAM=<SLACK TEAM NAME> -e SLACK_API_TOKEN="<SLACK API TOKEN>" -e SLACK_COOKIE="<SLACK COOKIE>" slack-emojinator
+```
+
+or
+
+```sh
+docker run -v <Emoji directory>:/emoji slack-emojinator upload.py /emoji --team-name="<SLACK TEAM NAME>" --api-token="<SLACK API TOKEN>" --cookie="<SLACK COOKIE>"
+```
+
+#### Export Emoji
+
+```sh
+docker run -v <Emoji directory>:/emoji -e SLACK_TEAM=<SLACK TEAM NAME> -e SLACK_API_TOKEN="<SLACK API TOKEN>" -e SLACK_COOKIE="<SLACK COOKIE>" slack-emojinator export.py /emoji/
 ```
